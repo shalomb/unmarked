@@ -18,8 +18,12 @@ var versionCmd = &cobra.Command{
 	Long:  `Print the version information`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf(heredoc.Doc(`
-      %s %s 
+      %s version %s
       %s, %s from %s on %s
-		`), appName, Version, BuildTime, Version, Branch, BuildHost)
+      go version %s %s/%s
+		`), AppName, Version,
+			BuildTime, Version,
+			Branch, BuildHost,
+			GoVersion, GoOS, GoArch)
 	},
 }

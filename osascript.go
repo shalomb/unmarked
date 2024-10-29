@@ -1,16 +1,19 @@
 package main
 
-import "bytes"
+import (
+	"fmt"
 
-type OSAScript struct {
-	script string
-}
-
-var (
-	scriptRunner = NewScriptRunner()
+	"github.com/MakeNowJust/heredoc"
 )
 
-func osascript(s string, a ...string) (int, bytes.Buffer, bytes.Buffer, error) {
-	s = "#!/usr/bin/env osascript\n" + s
-	return scriptRunner.run(&OSAScript{script: s}, a...)
+func osascript(s string, args ...string) *Script {
+	script := fmt.Sprintf(
+		heredoc.Doc(`
+		#!/usr/bin/osascript
+		%s
+	`), s)
+	return &Script{
+		script: script,
+		args:   args,
+	}
 }

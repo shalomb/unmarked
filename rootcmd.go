@@ -26,8 +26,12 @@ var (
 		Long:  `"Unmarked marks windows for use with shortcuts"`,
 		// Uncomment the following line if your bare application
 		// has an action associated with it:
-		// Run: func(cmd *cobra.Command, args []string) {
-		// },
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) == 0 {
+				cmd.Help()
+				os.Exit(0)
+			}
+		},
 	}
 )
 
@@ -38,21 +42,22 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", fmt.Sprintf("config file (default is %v)", defaultCfgFile))
-	viper.BindPFlag("config", rootCmd.PersistentFlags().Lookup("config"))
+	var debug bool
+	rootCmd.PersistentFlags().BoolVarP(&debug, "debug", "d", false, "enable debug logging")
+	viper.BindPFlag("debug", rootCmd.PersistentFlags().Lookup("debug"))
 
-	log.Printf("cfgFile: %+v", cfgFile)
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", defaultCfgFile, "default config file")
+	viper.BindPFlag("config", rootCmd.PersistentFlags().Lookup("config"))
 
 	// Cobra also supports local flags, which will only run when this
 	// action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
-	log.Printf("cfgFile: %+v", rootCmd.Flags().Lookup("toggle").Value)
+	// res, err := rootCmd.Flags().GetBool("toggle")
+	// rootCmd.Flags().BoolP("toggle", "t", false, "Set a toggle")
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
+// InitCobra adds all child commands to the root command and sets flags appropriately.
 // This is called by main.init(). It only needs to happen once to the rootCmd.
-func Execute() error {
+func InitCobra() error {
 	return rootCmd.Execute()
 }
 
@@ -61,14 +66,12 @@ func initConfig() {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
-
 		// Search config in home directory with name ".cobra" (without extension).
-		viper.AddConfigPath(home)
+		viper.AddConfigPath(xdg.Home)
+		viper.AddConfigPath(path.Join(xdg.ConfigHome, AppName))
+		viper.AddConfigPath(path.Join(xdg.StateHome, AppName))
 		viper.SetConfigType("yaml")
-		viper.SetConfigName(".cobra")
+		viper.SetConfigName(AppName)
 	}
 
 	viper.AutomaticEnv()
@@ -76,21 +79,25 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			log.Warnf("Error, config file not found: %v", cfgFile)
-		} else {
-			log.Printf("Using config file: %v", viper.ConfigFileUsed())
 		}
 	}
+	log.Debugf("Using config file: %v", viper.ConfigFileUsed())
 
 	rootCmd.Flags().VisitAll(func(f *pflag.Flag) {
-		// Determine the naming convention of the flags when represented in the config file
+		// Determine the naming convention of the flags when
+		// represented in the config file
 		configName := f.Name
-		log.Printf("Processing flag: %v", f.Name)
+		log.Debugf("Processing flag: %v", f.Name)
 
-		// Apply the viper config value to the flag when the flag is not set and viper has a value
+		// Apply the viper config value to the flag
+		// when the flag is not set and viper has a value
 		if !f.Changed && viper.IsSet(configName) {
 			val := viper.Get(configName)
 			rootCmd.Flags().Set(f.Name, fmt.Sprintf("%v", val))
 		}
 	})
 
+	if viper.GetBool("debug") {
+		log.SetLevel(log.DebugLevel)
+	}
 }

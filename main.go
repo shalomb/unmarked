@@ -13,17 +13,21 @@ import (
 )
 
 func main() {
-	if err := Execute(); err != nil {
+	if err := InitCobra(); err != nil {
 		log.Fatalf("Error running unmarked: %v", err)
 		os.Exit(3)
 	}
 }
 
 var (
-	appName   string = "unmarked"
-	stateHome string = path.Join(xdg.StateHome, appName)
-	Version   string
-	BuildTime string
-	BuildHost string
+	AppName   string
 	Branch    string
+	BuildHost string
+	BuildTime string
+	GoVersion string
+	GoArch    string
+	GoOS      string
+	Version   string
+
+	stateHome string = path.Join(xdg.StateHome, AppName)
 )

@@ -2,35 +2,66 @@ package main
 
 import (
 	"bytes"
-	"io/ioutil"
 	"os"
 	"os/exec"
 
 	log "github.com/sirupsen/logrus"
 )
 
-type ScriptRunner struct {
-	script string
+// func init() {
+// 	Script = NewScript()
+// }
+//
+// // NewScript is ...
+// func NewScript() *Script {
+// 	return &Script{
+// 		workDir: "/tmp",
+// 	}
+// }
+
+// ShellScript is ..
+var scriptRunner *Script
+
+// Script is ...
+type Script struct {
+	workDir string
+	script  string
+	args    []string
 }
 
-func NewScriptRunner() *ScriptRunner {
-	log.Printf("Setting up script runner")
-	return new(ScriptRunner)
+// // Script is ...
+// type Script interface {
+// 	Script() string
+// 	Args() []string
+// 	Exec() (int, bytes.Buffer, bytes.Buffer, error)
+// }
+
+// Script is ..
+func (s *Script) Script() string {
+	return s.script
 }
 
-func (r *ScriptRunner) run(s *OSAScript, a ...string) (int, bytes.Buffer, bytes.Buffer, error) {
-	log.Printf("Running [%v] with [%v]", s, a)
+// Args is ..
+func (s *Script) Args() []string {
+	return s.args
+}
+
+// Execute is ..
+func (s *Script) Exec() (int, bytes.Buffer, bytes.Buffer, error) {
+	e := s.script
+	a := s.args
+	log.Printf("Running [%v] with [%v]", e, a)
 
 	var err error
 
-	tmpfile, err := ioutil.TempFile(os.TempDir(), "unmarked.*.script")
+	tmpfile, err := os.CreateTemp(os.TempDir(), "unmarked.*.script")
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	defer os.Remove(tmpfile.Name()) // clean up
 
-	if _, err := tmpfile.Write([]byte(s.script)); err != nil {
+	if _, err := tmpfile.Write([]byte(e)); err != nil {
 		tmpfile.Close()
 		log.Fatal(err)
 	}
