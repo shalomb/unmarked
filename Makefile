@@ -1,43 +1,71 @@
-#!/usr/bin/make -f
+#!/usr/bin/make -fv
 
 .ONESHELL:
 SHELLFLAGS := -u nounset -ec
 
-THIS_MAKEFILE := $(realpath $(lastword $(MAKEFILE_LIST)))
-THIS_DIR      := $(shell dirname $(THIS_MAKEFILE))
-THIS_PROJECT  := unmarked
-
-VERSION := $(shell git rev-parse --short HEAD)
+APPNAME   := unmarked
+MODNAME   := github.com/shalomb/$(APPNAME)
+VERSION   := $(shell git describe --tags --long --always)
+GO				:= $(shell command -v go)
+GOVERSION := $(shell go version | awk '{ print $$3 }')
+GOOS      := $(shell go version | awk '{ split($$4, a, "/"); print a[1]  }' )
+GOARCH    := $(shell go version | awk '{ split($$4, a, "/"); print a[2]  }' )
 GITBRANCH := $(shell git branch --show-current)
-BUILDTIME := $(shell date -u '+%Y-%m-%dT%H:%M:%SZ')
+BUILDTIME := $(shell date -u '+%Y-%m-%dT%H:%M:%S%z')
 BUILDHOST := $(shell hostname -f)
 
-GOLDFLAGS += -X main.Version=$(VERSION)
-GOLDFLAGS += -X main.BuildTime=$(BUILDTIME)
+THIS_MAKEFILE := $(realpath $(lastword $(MAKEFILE_LIST)))
+THIS_DIR      := $(shell dirname $(THIS_MAKEFILE))
+THIS_PROJECT  := $(APPNAME)
+
+GOLDFLAGS += -X main.AppName=$(APPNAME)
 GOLDFLAGS += -X main.Branch=$(GITBRANCH)
 GOLDFLAGS += -X main.BuildHost=$(BUILDHOST)
+GOLDFLAGS += -X main.BuildTime=$(BUILDTIME)
+GOLDFLAGS += -X main.Version=$(VERSION)
+GOLDFLAGS += -X main.GoVersion=$(GOVERSION)
+GOLDFLAGS += -X main.GoOS=$(GOOS)
+GOLDFLAGS += -X main.GoArch=$(GOARCH)
 GOFLAGS = -ldflags "$(GOLDFLAGS)"
 
-.PHONY: serve watch
+UNAME_S := $(shell uname -s)
+TARGET :=
+ifeq ($(UNAME_S),Linux)
+	TARGET := "$(APPNAME)-linux"
+endif
+ifeq ($(UNAME_S),Darwin)
+	TARGET := "$(APPNAME)"
+endif
 
-build: build-env build-darwin
-	go build $(GOFLAGS)
+.PHONY: build build-env serve watch run
 
-build-darwin: build-env
-	GOOS=darwin GOARCH=arm64 go build -o unmarked-darwin
+build: build-env
+	echo $(GO) build $(GOFLAGS)
+	for os in darwin linux; do
+	  GOOS=$${os} GOARCH=$(GOARCH) go build $(GOFLAGS) -o $(APPNAME)-$${os}-$(GOARCH)
+	done
+
+clean: build-env tidy
+	rm -vf "$(APPNAME)"-*
+
+tidy:
+	go mod tidy
 
 build-env:
-	go mod init unmarked
+	go mod init $(APPNAME)
 	go mod download
 
 run: build
-	./unmarked
+	./$(APPNAME)
+
+deploy:
+	scp ./unmarked-darwin-arm64 host:~/.bin/unmarked
 
 serve:
-	./unmarked
+	./$(APPNAME)
 
 watch:
 	watcher
 
 version:
-	./unmarked version
+	./$(APPNAME) version

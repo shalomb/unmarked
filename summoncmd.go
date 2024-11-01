@@ -16,8 +16,14 @@ var summonCmd = &cobra.Command{
 	Short: "Summon a given window by its mark",
 	Long:  `Summon a given window by its mark`,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Printf("summon called: %v", args)
+		var mark string
+		if len(args) > 0 {
+			mark = args[0]
+		} else {
+			mark = "@"
+		}
+		log.Printf("summon called: %v", mark)
 		m := NewWinMarker()
-		m.SummonMark(args)
+		m.SummonMark(mark)
 	},
 }
