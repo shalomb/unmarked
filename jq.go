@@ -11,6 +11,7 @@ import (
 func jq(query string, input interface{}) (interface{}, error) {
 	var data map[string]interface{}
 	if err := json.Unmarshal([]byte(input.(string)), &data); err != nil {
+		log.Printf("Error marshalling JSON: %v", err)
 		return nil, err
 	}
 

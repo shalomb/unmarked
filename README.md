@@ -1,16 +1,23 @@
 **unmarked 🎯**
 ---
 
-Similar to [`harpoon`](https://github.com/ThePrimeagen/harpoon), unmarked is the keyboard user's tool for switching to windows
-just using their marks.
+Similar to [`harpoon`](https://github.com/ThePrimeagen/harpoon), unmarked
+is the keyboard user's tool for switching desktop windows using just their
+marks.
+
+If you are familiar with [vim/neovim's concept of marks](https://vim.fandom.com/wiki/Using_marks#Setting_marks) - unmarked does
+the same for desktop windows.
 
 ```shell
-unmarked mark f     # Give the currently active window a mark of f
+unmarked mark f     # Mark the currently active window with the letter 'f'
 # Move around to other windows in the desktop environment, etc
-unmarked summon f   # Switch back to and focus the window with mark f
+unmarked summon f   # Switch back to and focus the window marked 'f'
 ```
 
-[yabai](https://github.com/koekeishiya/yabai) and [skhd](https://github.com/koekeishiya/skhd) are required to complete functionality.
+[yabai](https://github.com/koekeishiya/yabai) and [skhd](https://github.com/koekeishiya/skhd) are required to complete functionality. Works only on MacOS currently.
+
+**Setup ⚙️**
+---
 
 With a `~/.config/skhd/skhdrc` file as follows
 
@@ -31,27 +38,29 @@ ctrl + alt + cmd - x : ~/.bin/unmarked mark x
 ctrl + alt + cmd - y : ~/.bin/unmarked mark y
 ctrl + alt + cmd - z : ~/.bin/unmarked mark z
 ```
-You can press `ctrl-alt-cmd-t` when over a wezterm window to give it the mark
-`t`, press `ctrl-alt-cmd-f` when over a firefox window to mark it with `f`,
-etc, etc.
+You are free to use any letter now to mark (and jump between) windows.
 
-At any point later, press `ctrl-alt-t` to raise/focus the wezterm
-terminal, press `ctrl-alt-f` to focus firefox, etc.
+Let's say you use wezterm a lot in your workflow and want to mark it - you
+would press `ctrl-alt-cmd-t` to mark it with the letter `t`. (`t` being
+a mnemonic for terminal - but you would choose any letter of your liking).
+
+Now, let's say you've switched windows and are doing something else and want
+to move back to the wezterm window quickly - simply press `ctrl-alt-t`. Voila!
 
 No need to `alt-tab` or reach for the mouse - Win! 🏆
 
 **why? 💡**
 ---
 
-My workflow usually involves making some code edits in neovim in wezterm,
-switching to firefox to test, moving to jira to making some comments, moving
-to teams to make an annoucement, moving back to neovim, etc. `alt-tabbing` my
-way through these is a tad bit tedious.
+Most developers' workflow usually involves making some code edits in the
+terminal, switching to a browser to test, moving to some custom app to making
+some comments, moving to slack to make an announcement, moving back to the
+terminal to pick up coding work, etc.
 
-My working set is usually 2-3 windows - and I want these to be quick to summon at the
-speed of thought.
-With unmarked, simply pressing `ctrl-alt-<mnemonic>` is enough to get me back
-into the app and back on track.
+`alt-tabbing` your way through many open windows is a tad bit tedious that the
+tab key starts to develop a shine. For the few windows that make up the
+current context, it should be super quick to switch to/between them and hence
+the `ctrl-alt-<mnemonic>` to keep you in flow state.
 
 **Building 🛠️**
 ---
@@ -60,10 +69,10 @@ Requires `go` >= 1.19, yabai, skhd
 
 ```shell
 make build
-cp unmarked-darwin ~/.bin/unmarked
+cp unmarked-darwin* ~/.bin/unmarked  # or some other dir in $PATH
 export PATH="$HOME/.bin:$PATH"
 
-unmarked help
+unmarked help  # Testing installation
 ```
 **Debugging 🐞**
 ---

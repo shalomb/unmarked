@@ -18,7 +18,7 @@ func init() {
 // markCmd represents the mark command
 var markCmd = &cobra.Command{
 	Use:   "mark",
-	Short: "Mark a given window with a letter or number",
+	Short: "Mark the active window with a letter/number",
 	Long: `Windows can be marked and assigned letters or numbers as
 	shortcuts that can later be used in activating/showing those windows`,
 	Run: func(_ *cobra.Command, args []string) {

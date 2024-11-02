@@ -18,7 +18,7 @@ func init() {
 // summonCmd represents the summon command
 var summonCmd = &cobra.Command{
 	Use:   "summon",
-	Short: "Summon a given window by its mark",
+	Short: "Summon a window by mark",
 	Long:  `Summon a given window by its mark`,
 	Run: func(_ *cobra.Command, args []string) {
 		var mark string
@@ -40,12 +40,9 @@ func (w *WinMarker) SummonMark(mark string) {
 	log.Printf("SummonMark called: %+v, %+v", mark, markFile)
 
 	if _, err := os.Stat(markFile); errors.Is(err, os.ErrNotExist) {
-		n := osascript(fmt.Sprintf((heredoc.Doc(`
+		osascript(fmt.Sprintf((heredoc.Doc(`
             display alert "No mark defined for '%s'" giving up after 1.5
 		`)), mark))
-		if _, _, _, err := n.Exec(); err != nil {
-			log.Printf("Failed invoking notification, %v", err)
-		}
 		log.Fatalf("Mark file does not exist: %v (%v)", mark, markFile)
 	}
 

@@ -1,11 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"io"
-	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -19,7 +16,7 @@ func init() {
 // markCmd represents the mark command
 var chooseMarksCmd = &cobra.Command{
 	Use:   "choose",
-	Short: "Choose from available marked windows",
+	Short: "Choose from marked windows",
 	Long:  `Choose from all the marked windows`,
 	Run: func(_ *cobra.Command, _ []string) {
 		log.Printf("choosing marks under %v", stateHome)
@@ -28,34 +25,11 @@ var chooseMarksCmd = &cobra.Command{
 }
 
 func chooseMarks() {
-	matches, _ := filepath.Glob(fmt.Sprintf("%s/*", stateHome))
-	lines := []string{}
-	for _, match := range matches {
-		f, _ := os.Stat(match)
-		if !f.IsDir() {
-			data, err := os.ReadFile(match)
-			if err != nil {
-				log.Printf("ERROR: could not read file", match)
-			}
-
-			app, err := jq(".app", string(data))
-			if err != nil {
-				log.Printf("Could not find .app under %v", data)
-			}
-
-			title, err := jq(".title", string(data))
-			if err != nil {
-				log.Printf("Could not find .title under %v", data)
-			}
-
-			line := fmt.Sprintf("%s -> %s [%s]\n", filepath.Base(match), title, app)
-			lines = append(lines, line)
-		}
-	}
+	lines, _ := findMarks()
 
 	chooseCmd := exec.Command(
 		"choose", "-n", "20", "-s", "20", "-b", "fac898",
-		"-c", "FF7518", "-p", "Choose a mark")
+		"-c", "FF7518", "-p", "Choose mark")
 	chooseIn, _ := chooseCmd.StdinPipe()
 	chooseOut, _ := chooseCmd.StdoutPipe()
 

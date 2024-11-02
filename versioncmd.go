@@ -14,8 +14,8 @@ func init() {
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Print the version information",
-	Long:  `Print the version information`,
+	Short: "Print version information",
+	Long:  `Print the version and build information`,
 	Run: func(_ *cobra.Command, _ []string) {
 		fmt.Printf(heredoc.Doc(`
             %s version %s
