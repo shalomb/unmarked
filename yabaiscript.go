@@ -7,8 +7,9 @@ import (
 )
 
 func yabaiscript(s string, args ...string) *Script {
-	script := fmt.Sprintf(
-		heredoc.Doc(`
+	return &Script{
+		args: args,
+		script: fmt.Sprintf(heredoc.Doc(`
 		#!/usr/bin/env bash
 
 		set -o errexit -o nounset -o noclobber -o pipefail
@@ -17,9 +18,6 @@ func yabaiscript(s string, args ...string) *Script {
 		[[ ${DEBUG-} ]] && set -xv
 
 		%s
-	`), s)
-	return &Script{
-		script: script,
-		args:   args,
+	`), s),
 	}
 }

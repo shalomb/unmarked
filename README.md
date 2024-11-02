@@ -1,4 +1,5 @@
 **unmarked 🎯**
+---
 
 Similar to [`harpoon`](https://github.com/ThePrimeagen/harpoon), unmarked is the keyboard user's tool for switching to windows
 just using their marks.
@@ -40,6 +41,7 @@ terminal, press `ctrl-alt-f` to focus firefox, etc.
 No need to `alt-tab` or reach for the mouse - Win! 🏆
 
 **why? 💡**
+---
 
 My workflow usually involves making some code edits in neovim in wezterm,
 switching to firefox to test, moving to jira to making some comments, moving
@@ -52,6 +54,7 @@ With unmarked, simply pressing `ctrl-alt-<mnemonic>` is enough to get me back
 into the app and back on track.
 
 **Building 🛠️**
+---
 
 Requires `go` >= 1.19, yabai, skhd
 
@@ -62,3 +65,23 @@ export PATH="$HOME/.bin:$PATH"
 
 unmarked help
 ```
+**Debugging 🐞**
+---
+
+Ensure `unmarked` is installed into a directory of `$PATH
+`
+```shell
+unmarked version
+```
+
+Run `skhd` in debugging mode and test keyboard input
+
+```shell
+pkill skhd
+skhd -V
+
+# when complete with debugging, restart the skhd service
+skhd --start-service
+```
+
+Refer to [`skhd`'s documentation](https://github.com/koekeishiya/skhd/issues/1) on how to discover keycodes.

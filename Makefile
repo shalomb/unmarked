@@ -49,6 +49,7 @@ clean: build-env tidy
 	rm -vf "$(APPNAME)"-*
 
 tidy:
+	go get -u ./...  # Upgrade all packages
 	go mod tidy
 
 build-env:

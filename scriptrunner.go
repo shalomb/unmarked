@@ -8,17 +8,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// func init() {
-// 	Script = NewScript()
-// }
-//
-// // NewScript is ...
-// func NewScript() *Script {
-// 	return &Script{
-// 		workDir: "/tmp",
-// 	}
-// }
-
 // ShellScript is ..
 var scriptRunner *Script
 
@@ -28,13 +17,6 @@ type Script struct {
 	script  string
 	args    []string
 }
-
-// // Script is ...
-// type Script interface {
-// 	Script() string
-// 	Args() []string
-// 	Exec() (int, bytes.Buffer, bytes.Buffer, error)
-// }
 
 // Script is ..
 func (s *Script) Script() string {
@@ -46,7 +28,7 @@ func (s *Script) Args() []string {
 	return s.args
 }
 
-// Execute is ..
+// Exec is ..
 func (s *Script) Exec() (int, bytes.Buffer, bytes.Buffer, error) {
 	e := s.script
 	a := s.args
