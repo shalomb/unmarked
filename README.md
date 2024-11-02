@@ -1,7 +1,7 @@
 **unmarked 🎯**
 ---
 
-Similar to [`harpoon`](https://github.com/ThePrimeagen/harpoon), unmarked
+Similar to [`harpoon`](https://github.com/ThePrimeagen/harpoon/tree/harpoon2), unmarked
 is the keyboard user's tool for switching desktop windows using just their
 marks.
 

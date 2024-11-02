@@ -100,7 +100,4 @@ func initConfig() {
 	if viper.GetBool("debug") {
 		log.SetLevel(log.DebugLevel)
 	}
-
-	// Aliases
-	viper.RegisterAlias("list", "ls")
 }
