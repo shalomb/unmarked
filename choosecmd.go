@@ -19,6 +19,10 @@ var chooseMarksCmd = &cobra.Command{
 	Short: "Choose from marked windows",
 	Long:  `Choose from all the marked windows`,
 	Run: func(_ *cobra.Command, _ []string) {
+		if !commandExists("choose") {
+			log.Fatalf("tool 'choose' is not installed. Install with 'brew install choose-gui'")
+		}
+
 		log.Printf("choosing marks under %v", stateHome)
 		chooseMarks()
 	},
