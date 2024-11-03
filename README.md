@@ -49,6 +49,17 @@ to move back to the wezterm window quickly - simply press `ctrl-alt-t`. Voila!
 
 No need to `alt-tab` or reach for the mouse - Win! 🏆
 
+To help setup a set of initial marks, an example [`unmarked.yaml`](./unmarked.yaml) is
+available to build from.
+
+```shell
+mkdir -p ~/Library/Application\ Support/unmarked/
+cp unmarked.yaml ~/Library/Application\ Support/unmarked/
+
+# Setup marks on your preferences
+unmarked generate
+```
+
 **why? 💡**
 ---
 
@@ -94,3 +105,10 @@ skhd --start-service
 ```
 
 Refer to [`skhd`'s documentation](https://github.com/koekeishiya/skhd/issues/1) on how to discover keycodes.
+
+If unmarked is unable to mark a window, this may be a fault with yabai. Ensure
+yabai is able to generate a JSON representation of the window object.
+
+```shell
+sleep 5 && yabai -m query --windows --window
+```

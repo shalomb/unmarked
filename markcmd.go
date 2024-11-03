@@ -93,13 +93,14 @@ func (w *WinMarker) MarkWindow(r rune) {
 
 // SaveMark is ...
 func (w *WinMarker) SaveMark(r rune, b []byte) error {
-	target := path.Join(w.stateHome, string(r))
+	mark := string(r)
+	target := path.Join(w.stateHome, mark)
 
-	log.Printf("Saving mark '%+v' to '%v'", string(r), target)
+	log.Printf("Saving mark '%+v' to '%v'", mark, target)
 	if err := os.WriteFile(target, b, 0600); err == nil {
-		log.Debugf("Mark written: %v -> (%v)", string(r), string(b))
+		log.Debugf("  Mark written: %v -> %v", mark, string(b))
 	} else {
-		log.Errorf("Error writing mark: %v -> (%v)", r, string(b))
+		log.Errorf("Error writing mark: %v -> %v", mark, b)
 	}
 
 	return nil

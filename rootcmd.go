@@ -69,7 +69,7 @@ func initConfig() {
 		// Search config in home directory with name ".cobra" (without extension).
 		viper.AddConfigPath(xdg.Home)
 		viper.AddConfigPath(path.Join(xdg.ConfigHome, AppName))
-		viper.AddConfigPath(path.Join(xdg.StateHome, AppName))
+		// viper.AddConfigPath(path.Join(xdg.StateHome, AppName))
 		viper.SetConfigType("yaml")
 		viper.SetConfigName(AppName)
 	}
@@ -78,16 +78,18 @@ func initConfig() {
 
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			log.Warnf("Error, config file not found: %v", cfgFile)
+			log.Warnf("Warning: config file not found: %v, %v", cfgFile, err)
+		} else {
+			log.Warnf("Warning: Error in processing config file: %v, %v", cfgFile, err)
 		}
 	}
-	log.Debugf("Using config file: %v", viper.ConfigFileUsed())
+	log.Printf("Using config file: %v", viper.ConfigFileUsed())
 
 	rootCmd.Flags().VisitAll(func(f *pflag.Flag) {
 		// Determine the naming convention of the flags when
 		// represented in the config file
 		configName := f.Name
-		log.Debugf("Processing flag: %v", f.Name)
+		log.Printf("Processing flag: %v", f.Name)
 
 		// Apply the viper config value to the flag
 		// when the flag is not set and viper has a value

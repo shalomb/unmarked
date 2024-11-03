@@ -38,7 +38,7 @@ func listMarks() {
 }
 
 func findMarks() ([]string, []string) {
-	windowMap := getWindows()
+	windowsById, _ := getWindows()
 	matches, _ := filepath.Glob(fmt.Sprintf("%s/*", stateHome))
 	lines := []string{}
 	stale := []string{}
@@ -55,13 +55,13 @@ func findMarks() ([]string, []string) {
 				log.Printf("Could not find .id under %v", data)
 			}
 
-			if obj, ok := windowMap[fmt.Sprint(id)]; ok {
+			if obj, ok := windowsById[fmt.Sprint(id)]; ok {
 				line := fmt.Sprintf("%v ⟶ %v\n",
 					filepath.Base(match),
 					strings.Join(obj, " | "))
 				lines = append(lines, line)
 			} else {
-				log.Printf("id %v not in windowMap", id)
+				log.Printf("id %v not in windowsById", id)
 				stale = append(stale, match)
 			}
 		}
@@ -69,27 +69,27 @@ func findMarks() ([]string, []string) {
 	return lines, stale
 }
 
-func getWindows() map[string][]string {
-	windowMap := make(map[string][]string)
+func getWindows() (map[string][]string, []interface{}) {
+	windowsById := make(map[string][]string)
+	var windowsList []interface{}
 
 	sc := yabaiscript(heredoc.Doc(`yabai -m query --windows`))
 	if _, stdout, stderr, err := sc.Exec(); err == nil {
 
-		var data []interface{}
-		if err := json.Unmarshal([]byte(stdout.String()), &data); err != nil {
+		if err := json.Unmarshal([]byte(stdout.String()), &windowsList); err != nil {
 			log.Fatalf("Error marshalling JSON: %v", err)
 		}
 
-		for _, v := range data {
+		for _, v := range windowsList {
 			winMap := v.(map[string]interface{})
 			id := fmt.Sprint(winMap["id"])
 			title := winMap["title"].(string)
 			app := winMap["app"].(string)
-			windowMap[id] = []string{title, id, app}
+			windowsById[id] = []string{title, id, app}
 		}
 	} else {
 		log.Fatalf("Error running yabai: err: %s, stderr: %s", err, stderr.String())
 	}
 
-	return windowMap
+	return windowsById, windowsList
 }

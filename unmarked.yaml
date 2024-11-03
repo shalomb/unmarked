@@ -1,0 +1,24 @@
+---
+
+preferences:
+  signal:
+    mark: g
+  finder:
+    mark: e
+  google chrome:
+    mark: f
+  microsoft outlook:
+    mark: m
+  obsidian:
+    mark: o
+  spotify:
+    mark: s
+  friendly streaming:
+    mark: y
+  microsoft teams:
+    mark: t
+  wezterm:
+    mark: '@'
+  windows app:
+    mark: w
+    title: Windows 365
